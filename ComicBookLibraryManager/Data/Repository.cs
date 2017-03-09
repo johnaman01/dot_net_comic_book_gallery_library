@@ -133,7 +133,17 @@ namespace ComicBookLibraryManager.Data
         /// <param name="comicBook">The ComicBook entity instance to add.</param>
         public static void AddComicBook(ComicBook comicBook)
         {
-            // TODO
+            using (Context context = GetContext())
+            {          
+                context.ComicBooks.Add(comicBook);
+
+                if (comicBook.Series != null && comicBook.Series.Id > 0)
+                {
+                    context.Entry(comicBook.Series).State = EntityState.Unchanged;
+                }
+
+                context.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -142,7 +152,21 @@ namespace ComicBookLibraryManager.Data
         /// <param name="comicBook">The ComicBook entity instance to update.</param>
         public static void UpdateComicBook(ComicBook comicBook)
         {
-            // TODO
+            using (Context context = GetContext())
+            {
+                //use DbSet find method
+                // ComicBook comicBookToUpdate = context.ComicBooks.Find(comicBook.Id);
+                // context.Entry(comicBookToUpdate)
+                //.CurrentValues.SetValues(comicBook);
+
+                //DbSet Attach method
+                context.ComicBooks.Attach(comicBook);
+                var comicBookEntry = context.Entry(comicBook);
+                comicBookEntry.State = EntityState.Modified;
+
+                context.SaveChanges();
+
+            }
         }
 
         /// <summary>
